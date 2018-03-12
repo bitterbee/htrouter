@@ -27,6 +27,8 @@ public class HTRouterEntry {
     private final Pattern regexReverse;
     /** 跳转页面的类型信息 */
     private Class<?> activity;
+    /** 跳转页面的类名 */
+    private String activityClassName;
     /** 本页面可以匹配的URL */
     private String url;
     /** 本页面url中对应的scheme */
@@ -43,13 +45,13 @@ public class HTRouterEntry {
     /**
      * 构造一个用于保存URL与页面对应关系的类
      *
-     * @param activity  目标页面的类型信息
+     * @param activityClassName  目标页面的类型信息
      * @param url       用于匹配的URL信息
      * @param exitAnim  退出动画的资源id
      * @param entryAnim 进入动画的资源id
      */
-    public HTRouterEntry(Class<?> activity, String url, int exitAnim, int entryAnim, boolean needLogin) {
-        this.activity = activity;
+    public HTRouterEntry(String activityClassName, String url, int exitAnim, int entryAnim, boolean needLogin) {
+        this.activityClassName = activityClassName;
         this.url = url;
         this.scheme = scheme(url);
         this.host = host(url);
@@ -64,11 +66,11 @@ public class HTRouterEntry {
     /**
      * 构造一个用于保存URL与页面对应关系的类,默认进出场动画
      *
-     * @param activity 目标页面的类型信息
+     * @param activityClassName 目标页面的类型信息
      * @param url      用于匹配的URL信息
      */
-    public HTRouterEntry(Class<?> activity, String url) {
-        this.activity = activity;
+    public HTRouterEntry(String activityClassName, String url) {
+        this.activityClassName = activityClassName;
         this.url = url;
         this.host = host(url);
         this.exitAnim = 0;
@@ -152,6 +154,13 @@ public class HTRouterEntry {
     }
 
     public Class<?> getActivity() {
+        if (activity == null) {
+            try {
+                this.activity = Class.forName(activityClassName);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
         return activity;
     }
 

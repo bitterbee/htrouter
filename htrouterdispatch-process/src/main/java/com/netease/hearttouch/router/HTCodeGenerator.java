@@ -85,10 +85,20 @@ final class HTCodeGenerator {
                 .returns(void.class);
         for (HTAnnotatedClass annotatedClass : classes) {
             ClassName activity = ClassName.bestGuess(annotatedClass.getActivity());
+
+            // get class full name
+            StringBuilder sbClazzName = new StringBuilder(32);
+            sbClazzName.append(activity.packageName()).append(".");
+            for (String simplename : activity.simpleNames()) {
+                sbClazzName.append(simplename);
+                sbClazzName.append("$");
+            }
+            sbClazzName.deleteCharAt(sbClazzName.length() - 1);
+
             for (String url : annotatedClass.getUrl()) {
-                initMethod.addStatement("entries.put($S, new HTRouterEntry($T.class, $S, $L, $L, $L))",
-                        url, activity, url,
-                        annotatedClass.getExitAnim(), annotatedClass.getEntryAnim(), annotatedClass.isNeedLogin());
+                initMethod.addStatement("entries.put($S, new HTRouterEntry($S, $S, $L, $L, $L))",
+                        url, sbClazzName.toString(),
+                        url, annotatedClass.getExitAnim(), annotatedClass.getEntryAnim(), annotatedClass.isNeedLogin());
             }
         }
         builder.addMethod(initMethod.build());
