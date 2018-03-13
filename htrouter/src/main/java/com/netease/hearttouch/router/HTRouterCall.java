@@ -17,7 +17,7 @@ import java.util.List;
  * Created by zyl06 on 13/03/2018.
  */
 public class HTRouterCall implements IRouterCall {
-    /*package*/ static IRouterInterceptor sGlobalInterceptor;
+    /*package*/ static List<IRouterInterceptor> sGlobalInterceptors = new ArrayList<>();
     /*package*/ static final List<HTInterceptorEntry> ANNO_INTERCEPTORS = new LinkedList<>();
 
     HTDroidRouterParams params = new HTDroidRouterParams();
@@ -30,6 +30,42 @@ public class HTRouterCall implements IRouterCall {
         if (inInterceptors != null) {
             ANNO_INTERCEPTORS.addAll(inInterceptors);
         }
+    }
+
+    public void addGlobalInterceptors(IRouterInterceptor... interceptors) {
+        Collections.addAll(sGlobalInterceptors, interceptors);
+    }
+
+    public static void call(Context context, String url) {
+        newBuilder(url)
+                .context(context)
+                .build()
+                .start();
+    }
+
+    public static void call(Fragment fragment, String url) {
+        newBuilder(url)
+                .fragment(fragment)
+                .build()
+                .start();
+    }
+
+    public static void call(Context context, String url, int requestCode) {
+        newBuilder(url)
+                .context(context)
+                .forResult(true)
+                .requestCode(requestCode)
+                .build()
+                .start();
+    }
+
+    public static void call(Fragment fragment, String url, int requestCode) {
+        newBuilder(url)
+                .fragment(fragment)
+                .forResult(true)
+                .requestCode(requestCode)
+                .build()
+                .start();
     }
 
     public void start() {
@@ -150,8 +186,8 @@ public class HTRouterCall implements IRouterCall {
                 }
             }
 
-            if (sGlobalInterceptor != null) {
-                call.interceptors.add(sGlobalInterceptor);
+            if (!sGlobalInterceptors.isEmpty()) {
+                call.interceptors.addAll(sGlobalInterceptors);
             }
             if (call.params.requestCode != 0) {
                 call.params.forResult = true;

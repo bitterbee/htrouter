@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.netease.hearttouch.router.intercept.HTInterceptorEntry;
 import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -41,10 +42,6 @@ public class HTRouterManager {
         if (inInterceptors != null) {
             HTRouterCall.initAnnoInterceptors(inInterceptors);
         }
-    }
-
-    public static void setGloablInterceptor(IRouterInterceptor interceptor) {
-        HTRouterCall.sGlobalInterceptor = interceptor;
     }
 
     /**

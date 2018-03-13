@@ -11,19 +11,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="109965d2-6f7b-402e-bfe0-4b2308ab0cfc" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/HTRouterParams.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ht-router.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/htrouter.iml" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterParams.java" afterPath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTDroidRouterParams.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/cache.properties.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/fileHashes.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.4/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/GlobalRouterInterceptor.java" afterPath="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/GlobalRouterInterceptor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java" afterPath="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java" afterPath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/IRouterCall.java" afterPath="$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/IRouterCall.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java" afterPath="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -61,21 +50,35 @@
         <entry file="file://$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/IRouterCall.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="135">
-              <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+              <caret line="9" column="12" lean-forward="false" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HTRouterCall.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="HTRouterCall.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="228">
-              <caret line="22" column="15" lean-forward="false" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="15" />
+            <state relative-caret-position="214">
+              <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1564#1565#0" expanded="true" />
-                <element signature="e#1593#1594#0" expanded="true" />
+                <element signature="e#2629#2630#0" expanded="true" />
+                <element signature="e#2658#2659#0" expanded="true" />
+                <element signature="e#3600#3601#0" expanded="true" />
+                <element signature="e#3639#3640#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="HTRouterManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="337">
+              <caret line="43" column="9" lean-forward="true" selection-start-line="43" selection-start-column="9" selection-end-line="43" selection-end-column="9" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -93,11 +96,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ProductDetailInterceptor.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ProductDetailInterceptor.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
-              <caret line="16" column="72" lean-forward="true" selection-start-line="16" selection-start-column="72" selection-end-line="16" selection-end-column="72" />
+              <caret line="16" column="67" lean-forward="false" selection-start-line="16" selection-start-column="67" selection-end-line="16" selection-end-column="67" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -119,21 +122,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PushCmdDispatcher.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo/build/generated/source/apt/debug/com/netease/hearttouch/router/PushCmdDispatcher.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="HTDroidRouterParams.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTDroidRouterParams.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+            <state relative-caret-position="225">
+              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -144,8 +137,8 @@
       <file leaf-file-name="HTRouterParams.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/HTRouterParams.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
+            <state relative-caret-position="180">
+              <caret line="12" column="1" lean-forward="false" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
               <folding />
             </state>
           </provider>
@@ -4208,23 +4201,23 @@
         <option value="$PROJECT_DIR$/htrouter/build.gradle" />
         <option value="$PROJECT_DIR$/demo/build.gradle" />
         <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java" />
         <option value="$PROJECT_DIR$/htrouterdispatch-process/src/main/java/com/netease/hearttouch/router/codegenerate/RouterTableGenerator.java" />
         <option value="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/HTApplication.java" />
         <option value="$PROJECT_DIR$/demo/build/generated/source/apt/debug/com/netease/hearttouch/router/HTRouterTable.java" />
         <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterParams.java" />
         <option value="$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/HTRouterParams.java" />
-        <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java" />
         <option value="$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/IRouterCall.java" />
         <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTDroidRouterParams.java" />
         <option value="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/GlobalRouterInterceptor.java" />
         <option value="$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java" />
+        <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java" />
+        <option value="$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="65" />
-    <option name="y" value="23" />
+    <option name="x" value="287" />
+    <option name="y" value="59" />
     <option name="width" value="1683" />
     <option name="height" value="1014" />
   </component>
@@ -4476,7 +4469,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520944403941" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520950561139" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -4522,7 +4515,7 @@
       </Profilers>
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520944403942" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520950561139" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -4778,7 +4771,7 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method>
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520944403970" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1520950561141" />
       </method>
     </configuration>
     <list size="1">
@@ -4817,7 +4810,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="23" width="1683" height="1014" extended-state="0" />
+    <frame x="287" y="59" width="1683" height="1014" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -4832,7 +4825,7 @@
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18485524" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.18485524" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -4842,7 +4835,7 @@
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22242536" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32962137" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Fabric" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -5018,6 +5011,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="189">
           <caret line="121" column="93" lean-forward="false" selection-start-line="121" selection-start-column="93" selection-end-line="121" selection-end-column="93" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -5164,16 +5158,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="22" lean-forward="false" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/htrouterdispatch-process/src/main/java/com/netease/hearttouch/router/codegenerate/RouterTableGenerator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="555">
@@ -5262,36 +5246,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/HTRouterParams.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="13" lean-forward="false" selection-start-line="5" selection-start-column="13" selection-end-line="5" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTDroidRouterParams.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="228">
-          <caret line="22" column="15" lean-forward="false" selection-start-line="22" selection-start-column="15" selection-end-line="22" selection-end-column="15" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1564#1565#0" expanded="true" />
-            <element signature="e#1593#1594#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/GlobalRouterInterceptor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
@@ -5302,20 +5256,62 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="16" column="67" lean-forward="false" selection-start-line="16" selection-start-column="67" selection-end-line="16" selection-end-column="67" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/IRouterCall.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
-          <caret line="9" column="19" lean-forward="false" selection-start-line="9" selection-start-column="19" selection-end-line="9" selection-end-column="19" />
+          <caret line="9" column="12" lean-forward="false" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo/src/main/java/com/netease/hearttouch/example/ProductDetailInterceptor.java">
+    <entry file="file://$PROJECT_DIR$/htrouterdispatch/src/main/java/com/netease/hearttouch/router/HTRouterParams.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="16" column="72" lean-forward="true" selection-start-line="16" selection-start-column="72" selection-end-line="16" selection-end-column="72" />
+        <state relative-caret-position="180">
+          <caret line="12" column="1" lean-forward="false" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTDroidRouterParams.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="337">
+          <caret line="43" column="9" lean-forward="true" selection-start-line="43" selection-start-column="9" selection-end-line="43" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/htrouter/src/main/java/com/netease/hearttouch/router/HTRouterCall.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2629#2630#0" expanded="true" />
+            <element signature="e#2658#2659#0" expanded="true" />
+            <element signature="e#3600#3601#0" expanded="true" />
+            <element signature="e#3639#3640#0" expanded="true" />
           </folding>
         </state>
       </provider>
