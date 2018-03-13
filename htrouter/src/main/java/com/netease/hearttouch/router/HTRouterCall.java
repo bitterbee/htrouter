@@ -10,10 +10,8 @@ import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zyl06 on 13/03/2018.
@@ -22,7 +20,7 @@ public class HTRouterCall implements IRouterCall {
     /*package*/ static IRouterInterceptor sGlobalInterceptor;
     /*package*/ static final List<HTInterceptorEntry> ANNO_INTERCEPTORS = new LinkedList<>();
 
-    HTRouterParams params = new HTRouterParams();
+    HTDroidRouterParams params = new HTDroidRouterParams();
 
     private List<IRouterInterceptor> interceptors = new ArrayList<>();
 

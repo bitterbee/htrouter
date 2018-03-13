@@ -7,4 +7,5 @@ package com.netease.hearttouch.router;
 public interface IRouterCall {
     void proceed();
     void cancel();
+    HTRouterParams getParams();
 }

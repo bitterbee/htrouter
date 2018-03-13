@@ -1,8 +1,7 @@
 package com.netease.hearttouch.example;
 
+import com.netease.hearttouch.router.HTDroidRouterParams;
 import com.netease.hearttouch.router.HTLogUtil;
-import com.netease.hearttouch.router.HTRouterCall;
-import com.netease.hearttouch.router.HTRouterParams;
 import com.netease.hearttouch.router.IRouterCall;
 import com.netease.hearttouch.router.intercept.HTInterceptAnno;
 import com.netease.hearttouch.router.intercept.IRouterInterceptor;
@@ -15,9 +14,9 @@ public class ProductDetailInterceptor implements IRouterInterceptor {
 
     @Override
     public void intercept(IRouterCall call) {
-        HTRouterParams params = ((HTRouterCall)call).getParams();
-        HTLogUtil.d("Anno Interceptor 统计数据：" + params.getContext().getClass().getSimpleName() + "-->跳转url-->" + params.getUrl() +
-                "  参数intent" + params.getSourceIntent());
+        HTDroidRouterParams params = (HTDroidRouterParams) call.getParams();
+        HTLogUtil.d("Anno Interceptor 统计数据：" + params.getContext().getClass().getSimpleName() + "-->跳转url-->" + params.url +
+                "  参数intent" + params.sourceIntent);
         //如果需要拦截或者改变跳转的目标可以直接改变url或者sourceIntent
 //                routerParams.url = "http://www.kaola.com/pay?a=b&c=d";
         call.proceed();
