@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/demo" />
+            <option value="$PROJECT_DIR$/htrouter" />
             <option value="$PROJECT_DIR$/htrouterdispatch" />
             <option value="$PROJECT_DIR$/htrouterdispatch-process" />
           </set>

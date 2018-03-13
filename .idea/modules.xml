@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/demo/demo.iml" filepath="$PROJECT_DIR$/demo/demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/htrouter.iml" filepath="$PROJECT_DIR$/htrouter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/htrouter/htrouter-htrouter.iml" filepath="$PROJECT_DIR$/htrouter/htrouter-htrouter.iml" />
       <module fileurl="file://$PROJECT_DIR$/htrouterdispatch/htrouterdispatch.iml" filepath="$PROJECT_DIR$/htrouterdispatch/htrouterdispatch.iml" />
       <module fileurl="file://$PROJECT_DIR$/htrouterdispatch-process/htrouterdispatch-process.iml" filepath="$PROJECT_DIR$/htrouterdispatch-process/htrouterdispatch-process.iml" />
     </modules>

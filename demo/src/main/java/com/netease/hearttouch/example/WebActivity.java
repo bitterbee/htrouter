@@ -1,4 +1,3 @@
-
 package com.netease.hearttouch.example;
 
 import android.content.Intent;
@@ -10,6 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.netease.hearttouch.router.HTLogUtil;
+import com.netease.hearttouch.router.HTRouterCall;
 import com.netease.hearttouch.router.HTRouterEntry;
 import com.netease.hearttouch.router.HTRouterManager;
 
@@ -34,7 +34,10 @@ public class WebActivity extends AppCompatActivity {
                 HTRouterEntry entity = HTRouterManager.findRouterEntryByUrl(url);
                 //为了防止匹配不上后循环跳，这里需要有个判断
                 if (entity != null) {
-                    HTRouterManager.startActivity(WebActivity.this, url, null, false);
+                    HTRouterCall.newBuilder(url)
+                            .context(WebActivity.this)
+                            .build()
+                            .start();
                     return true;
                 }
                 return super.shouldOverrideUrlLoading(view, url);

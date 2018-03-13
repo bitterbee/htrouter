@@ -1,1 +1,1 @@
-include ':demo', ':htrouterdispatch', ':htrouterdispatch-process'
+include ':demo', ':htrouterdispatch', ':htrouterdispatch-process', ':htrouter'

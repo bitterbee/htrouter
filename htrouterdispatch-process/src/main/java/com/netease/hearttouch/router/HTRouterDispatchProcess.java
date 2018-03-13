@@ -8,14 +8,15 @@ import com.google.auto.service.AutoService;
 import com.netease.hearttouch.pushcmd.PushCmdAnno;
 import com.netease.hearttouch.pushcmd.PushCmdAnnoClass;
 import com.netease.hearttouch.pushcmd.PushCmdCodeGenerator;
+import com.netease.hearttouch.router.codegenerate.IClassGenerator;
+import com.netease.hearttouch.router.codegenerate.RouterTableGenerator;
+import com.netease.hearttouch.router.intercept.HTInterceptAnno;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -33,28 +34,20 @@ import static java.util.Collections.singleton;
 import static javax.lang.model.SourceVersion.latestSupported;
 import static javax.tools.Diagnostic.Kind.ERROR;
 
-
 /**
  * 识别和预处理注解的类，会在编译期生成代码
  */
 @AutoService(Processor.class)
 public class HTRouterDispatchProcess extends AbstractProcessor {
+
     private Messager messager;
     private Filer filer;
     private String packageName = "com.netease.hearttouch.router";
     private static final String ANNOTATION = "@" + HTRouter.class.getSimpleName();
-    private static final int CODE_TYPE_HT_LOG_UTIL = 0;
-    private static final int CODE_TYPE_HT_ROUTER_HANDLER = 1;
-    private static final int CODE_TYPE_HT_ROUTER_MANAGER = 2;
-    private static final int CODE_TYPE_HT_ROUTER_ACTIVITY = 3;
-    private static final int CODE_TYPE_HT_ROUTER_HANDLER_PARAMS = 4;
-    private static final Map<Integer, String> CODE_TYPE_MAP= new HashMap<Integer, String>() {
+
+    private static final List<IClassGenerator> CLASS_GENERATORS = new ArrayList<IClassGenerator>() {
         {
-            put(CODE_TYPE_HT_LOG_UTIL, "Couldn't generate HTLogUtil class");
-            put(CODE_TYPE_HT_ROUTER_HANDLER, "Couldn't generate HTRouterListener class");
-            put(CODE_TYPE_HT_ROUTER_MANAGER, "Couldn't generate HTRouterManager class");
-            put(CODE_TYPE_HT_ROUTER_ACTIVITY, "Couldn't generate HTRouterActivity class");
-            put(CODE_TYPE_HT_ROUTER_HANDLER_PARAMS, "Couldn't generate HTRouterHandlerParams class");
+            add(new RouterTableGenerator());
         }
     };
 
@@ -113,7 +106,7 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
     }
 
     private boolean processHtRouter(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        List<HTAnnotatedClass> annotatedClasses = new ArrayList<>();
+        List<HTAnnotatedClass> routerAnnos = new ArrayList<>();
         //获取所有通过HTRouter注解的项，遍历
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(HTRouter.class)) {
             TypeElement annotatedClass = (TypeElement) annotatedElement;
@@ -123,17 +116,34 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
             }
             //获取到信息，把注解类的信息加入到列表中
             HTRouter htRouter = annotatedElement.getAnnotation(HTRouter.class);
-            annotatedClasses.add(new HTAnnotatedClass(annotatedClass, htRouter.url(), htRouter.entryAnim(), htRouter.exitAnim(), htRouter.needLogin()));
+            routerAnnos.add(new HTAnnotatedClass(annotatedClass, htRouter.url(), htRouter.entryAnim(), htRouter.exitAnim(), htRouter.needLogin()));
         }
 
-        //生成各种类
-        for (Integer type : CODE_TYPE_MAP.keySet()){
+        List<InterceptAnnoClass> interceptAnnos = new ArrayList<>();
+        for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(HTInterceptAnno.class)) {
+            TypeElement annotatedClass = (TypeElement) annotatedElement;
+            //检测是否是支持的注解类型，如果不是里面会报错
+            if (!isValidClass(annotatedClass)) {
+                return true;
+            }
+            //获取到信息，把注解类的信息加入到列表中
+            HTInterceptAnno interceptAnno = annotatedElement.getAnnotation(HTInterceptAnno.class);
+            interceptAnnos.add(new InterceptAnnoClass(annotatedClass, interceptAnno.url()));
+        }
+
+        for (IClassGenerator generator : CLASS_GENERATORS) {
             try {
-                generateCode(annotatedClasses, type);
+                if (!routerAnnos.isEmpty() || !interceptAnnos.isEmpty()) {
+                    TypeSpec generatedClass = generator.generate(packageName, routerAnnos, interceptAnnos);
+
+                    JavaFile javaFile = builder(packageName, generatedClass).build();
+                    javaFile.writeTo(filer);
+                }
             } catch (IOException e) {
-                messager.printMessage(ERROR, CODE_TYPE_MAP.get(type));
+                generator.printError(messager);
             }
         }
+
         return true;
     }
 
@@ -152,34 +162,5 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
         }
 
         return true;
-    }
-
-    private void generateCode(List<HTAnnotatedClass> annotatedClasses, int type) throws IOException {
-        if (annotatedClasses != null && annotatedClasses.size() == 0) {
-            return;
-        }
-        TypeSpec generatedClass = null;
-        switch (type){
-            case CODE_TYPE_HT_LOG_UTIL:
-                generatedClass = HTCodeGenerator.generateHTLogUtilClass(annotatedClasses);
-                break;
-            case CODE_TYPE_HT_ROUTER_HANDLER:
-                generatedClass = HTCodeGenerator.generateHTRouterHandlerClass(packageName, annotatedClasses);
-                break;
-            case CODE_TYPE_HT_ROUTER_MANAGER:
-                generatedClass = HTCodeGenerator.generateManagerClass(packageName, annotatedClasses);
-                break;
-            case CODE_TYPE_HT_ROUTER_ACTIVITY:
-                generatedClass = HTCodeGenerator.generateHTRouterActivityClass(packageName, annotatedClasses);
-                break;
-            case CODE_TYPE_HT_ROUTER_HANDLER_PARAMS:
-                generatedClass = HTCodeGenerator.generateHTRouterHandlerParamsClass(packageName, annotatedClasses);
-                break;
-            default:
-                messager.printMessage(ERROR, "unsupported code type.");
-                return;
-        }
-        JavaFile javaFile = builder(packageName, generatedClass).build();
-        javaFile.writeTo(filer);
     }
 }
