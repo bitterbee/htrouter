@@ -53,9 +53,9 @@ public class RouterTableGenerator implements IClassGenerator {
         builder.addField(htUrlParamKey);
 
         FieldSpec routerMap = FieldSpec
-                .builder(ParameterizedTypeName.get(Map.class, String.class, HTRouterEntry.class), "ROUTER_MAP",
+                .builder(ParameterizedTypeName.get(List.class, HTRouterEntry.class), "ROUTERS",
                         PRIVATE, STATIC, FINAL)
-                .initializer("new $T()", ParameterizedTypeName.get(LinkedHashMap.class, String.class, HTRouterEntry.class))
+                .initializer("new $T()", ParameterizedTypeName.get(LinkedList.class, HTRouterEntry.class))
                 .build();
         builder.addField(routerMap);
 
@@ -66,10 +66,10 @@ public class RouterTableGenerator implements IClassGenerator {
                 .build();
         builder.addField(interceptors);
 
-        MethodSpec.Builder routerMapMethod = MethodSpec.methodBuilder("routerMap")
+        MethodSpec.Builder routerMapMethod = MethodSpec.methodBuilder("routers")
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(Map.class, String.class, HTRouterEntry.class));
-        routerMapMethod.beginControlFlow("if (ROUTER_MAP.isEmpty())");
+                .returns(ParameterizedTypeName.get(List.class, HTRouterEntry.class));
+        routerMapMethod.beginControlFlow("if (ROUTERS.isEmpty())");
         for (HTAnnotatedClass annotatedClass : routerAnnos) {
             ClassName activity = ClassName.bestGuess(annotatedClass.getActivity());
 
@@ -83,13 +83,14 @@ public class RouterTableGenerator implements IClassGenerator {
             sbClazzName.deleteCharAt(sbClazzName.length() - 1);
 
             for (String url : annotatedClass.getUrl()) {
-                routerMapMethod.addStatement("ROUTER_MAP.put($S, new HTRouterEntry($S, $S, $L, $L, $L))",
-                        url, sbClazzName.toString(),
-                        url, annotatedClass.getExitAnim(), annotatedClass.getEntryAnim(), annotatedClass.isNeedLogin());
+                routerMapMethod.addStatement("ROUTERS.add(new HTRouterEntry($S, $S, $L, $L, $L))",
+                        sbClazzName.toString(), url,
+                        annotatedClass.getExitAnim(), annotatedClass.getEntryAnim(),
+                        annotatedClass.isNeedLogin());
             }
         }
         routerMapMethod.endControlFlow();
-        routerMapMethod.addStatement("return ROUTER_MAP");
+        routerMapMethod.addStatement("return ROUTERS");
         builder.addMethod(routerMapMethod.build());
 
         MethodSpec.Builder interceptorsMethod = MethodSpec.methodBuilder("interceptors")

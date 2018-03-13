@@ -12,8 +12,8 @@ import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by zyl06 on 13/03/2018.
@@ -31,11 +31,11 @@ public class HTRouterManager {
 
     public static final int H5 = 2;
 
-    private static final HashMap<String, HTRouterEntry> ENTRIES = new LinkedHashMap<>();
+    private static final List<HTRouterEntry> ENTRIES = new LinkedList<>();
 
-    public static void init(Map<String, HTRouterEntry> inEntries, List<HTInterceptorEntry> inInterceptors) {
+    public static void init(List<HTRouterEntry> inEntries, List<HTInterceptorEntry> inInterceptors) {
         if (inEntries != null) {
-            ENTRIES.putAll(inEntries);
+            ENTRIES.addAll(inEntries);
         }
 
         if (inInterceptors != null) {
@@ -109,18 +109,18 @@ public class HTRouterManager {
     }
 
     private static int getAnimIdMethod(Class activity, boolean isExitAnim) {
-        for (Map.Entry<String, HTRouterEntry> entry : ENTRIES.entrySet()) {
-            if (entry.getValue().getActivity().toString().equals(activity.toString())) {
-                return isExitAnim ? entry.getValue().getExitAnim() : entry.getValue().getEntryAnim();
+        for (HTRouterEntry entry : ENTRIES) {
+            if (entry.getActivity().toString().equals(activity.toString())) {
+                return isExitAnim ? entry.getExitAnim() : entry.getEntryAnim();
             }
         }
         return 0;
     }
 
     private static HTRouterEntry getRouterEntry(String url) {
-        for (Map.Entry<String, HTRouterEntry> entry : ENTRIES.entrySet()) {
-            if (entry.getValue().matches(url)) {
-                return entry.getValue();
+        for (HTRouterEntry entry : ENTRIES) {
+            if (entry.matches(url)) {
+                return entry;
             }
         }
         return null;
@@ -133,9 +133,9 @@ public class HTRouterManager {
      * @return 返回匹配成功后的实体类，如果找不到会返回null
      */
     public static HTRouterEntry findRouterEntryByUrl(String url) {
-        for (Map.Entry<String, HTRouterEntry> entry : ENTRIES.entrySet()) {
-            if (entry.getValue().matches(url)) {
-                return entry.getValue();
+        for (HTRouterEntry entry : ENTRIES) {
+            if (entry.matches(url)) {
+                return entry;
             }
         }
         return null;

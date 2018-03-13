@@ -4,13 +4,12 @@ import android.app.Application;
 
 import com.netease.hearttouch.router.HTRouterManager;
 import com.netease.hearttouch.router.HTRouterTable;
-//import com.netease.hearttouch.router.HTRouterTable;
 
 public class HTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HTRouterManager.init(HTRouterTable.routerMap(), HTRouterTable.interceptors());
+        HTRouterManager.init(HTRouterTable.routers(), HTRouterTable.interceptors());
         //注册绑定默认的降级页面
         String customUrlKey = "customUrlKey"; //HTWebActivity接收参数key
         HTRouterManager.registerWebActivity(WebActivity.class, customUrlKey);
