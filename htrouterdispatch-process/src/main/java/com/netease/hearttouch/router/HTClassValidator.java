@@ -4,7 +4,7 @@
  */
 package com.netease.hearttouch.router;
 
-import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.Element;
 
 import static javax.lang.model.element.Modifier.ABSTRACT;
 import static javax.lang.model.element.Modifier.PUBLIC;
@@ -20,7 +20,7 @@ final class HTClassValidator {
      * @param annotatedClass 需要判断的类
      * @return 如果是public的返回true，其他返回false
      */
-    static boolean isPublic(TypeElement annotatedClass) {
+    static boolean isPublic(Element annotatedClass) {
         return annotatedClass.getModifiers().contains(PUBLIC);
     }
 
@@ -30,7 +30,7 @@ final class HTClassValidator {
      * @param annotatedClass 需要判断的类
      * @return 如果是abstract的返回true，其他返回false
      */
-    static boolean isAbstract(TypeElement annotatedClass) {
+    static boolean isAbstract(Element annotatedClass) {
         return annotatedClass.getModifiers().contains(ABSTRACT);
     }
 }

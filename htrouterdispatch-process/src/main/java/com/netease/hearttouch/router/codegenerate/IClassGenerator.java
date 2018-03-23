@@ -1,6 +1,7 @@
 package com.netease.hearttouch.router.codegenerate;
 
 import com.netease.hearttouch.router.HTAnnotatedClass;
+import com.netease.hearttouch.router.HTAnnotatedMethod;
 import com.netease.hearttouch.router.InterceptAnnoClass;
 import com.squareup.javapoet.TypeSpec;
 
@@ -14,6 +15,9 @@ import javax.annotation.processing.Messager;
 
 public interface IClassGenerator {
     String className();
-    TypeSpec generate(String packageName, List<HTAnnotatedClass> classes, List<InterceptAnnoClass> interceptAnnos);
+    TypeSpec generate(String packageName,
+                      List<HTAnnotatedClass> annoClasses,
+                      List<InterceptAnnoClass> annoIntercepts,
+                      List<HTAnnotatedMethod> annoMethods);
     void printError(Messager messager);
 }

@@ -13,7 +13,6 @@ import java.util.Map;
  *
  * @author hzshengxueming
  */
-
 public class HTRouterEntry extends HTUrlEntry {
     /** 跳转页面的类型信息 */
     private Class<?> activity;

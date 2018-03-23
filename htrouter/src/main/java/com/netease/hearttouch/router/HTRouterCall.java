@@ -20,6 +20,7 @@ public class HTRouterCall implements IRouterCall {
     /*package*/ static List<IRouterInterceptor> sGlobalInterceptors = new ArrayList<>();
     /*package*/ static final List<HTInterceptorEntry> ANNO_INTERCEPTORS = new LinkedList<>();
 
+    private int routerType = RouterType.PAGE_TYPE_PAGE;
     HTDroidRouterParams params = new HTDroidRouterParams();
 
     private List<IRouterInterceptor> interceptors = new ArrayList<>();
@@ -32,7 +33,7 @@ public class HTRouterCall implements IRouterCall {
         }
     }
 
-    public void addGlobalInterceptors(IRouterInterceptor... interceptors) {
+    public static void addGlobalInterceptors(IRouterInterceptor... interceptors) {
         Collections.addAll(sGlobalInterceptors, interceptors);
     }
 
@@ -98,6 +99,28 @@ public class HTRouterCall implements IRouterCall {
     }
 
     private void realProceed() {
+        HTUrlEntry entry = HTRouterManager.findRouterEntryByUrl(params.url);
+        if (entry != null) {
+            doProceedPageRouter();
+            return;
+        }
+
+        entry = HTRouterManager.findMethodRouterEntryByUrl(params.url);
+        if (entry != null) {
+            doProceedMethodRouter();
+            return;
+        }
+    }
+
+    private void doProceedMethodRouter() {
+        try {
+            HTRouterManager.callMethod(params.getContext(), params.url);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void doProceedPageRouter() {
         if (params.forResult) {
             if (params.context != null) {
                 HTRouterManager.startActivityForResult((Activity) params.context, params.url,
@@ -185,15 +208,18 @@ public class HTRouterCall implements IRouterCall {
                     call.interceptors.add(entry.getInterceptor());
                 }
             }
+            call.interceptors.addAll(sGlobalInterceptors);
 
-            if (!sGlobalInterceptors.isEmpty()) {
-                call.interceptors.addAll(sGlobalInterceptors);
-            }
             if (call.params.requestCode != 0) {
                 call.params.forResult = true;
             }
 
             return call;
         }
+    }
+
+    private static final class RouterType {
+        private static final int PAGE_TYPE_PAGE = 0;
+        private static final int PAGE_TYPE_METHOD = 1;
     }
 }

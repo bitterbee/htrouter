@@ -1,41 +1,64 @@
 package com.netease.hearttouch.example;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.netease.hearttouch.router.HTRouter;
 import com.netease.hearttouch.router.HTRouterCall;
 import com.netease.hearttouch.router.IRouterCall;
 import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 
-@HTRouter(url = {"kaola://www.kaola.com/","kaola://m.kaola.com"},entryAnim = R.anim.enter,exitAnim = R.anim.exit)
+@HTRouter(url = {"yanxuan://www.you.163.com/", "yanxuan://m.you.163.com"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Button button = new Button(this);
-        button.setText("跳转到考拉商品类别H5页面");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                HTRouterCall.newBuilder("http://www.kaola.com/activity/detail/6932.shtml?navindex=7")
-                        .context(MainActivity.this)
-                        .isFinish(true)
-                        .interceptors(new IRouterInterceptor() {
-                            @Override
-                            public void intercept(IRouterCall call) {
-                                Log.i("TEST", call.toString());
-                                call.proceed();
-                            }
-                        })
-                        .build()
-                        .start();
-            }
-        });
-        setContentView(button);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void onPageRouter0(View v) {
+        HTRouterCall.newBuilder("http://www.you.163.com/activity/detail/6932.shtml?navindex=7")
+                .context(MainActivity.this)
+                .interceptors(new IRouterInterceptor() {
+                    @Override
+                    public void intercept(final IRouterCall call) {
+                        Log.i("TEST", call.toString());
+                        AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
+                                .setTitle("alert")
+                                .setMessage("是否继续")
+                                .setPositiveButton("继续", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        call.proceed();
+                                    }
+                                })
+                                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        call.cancel();
+                                    }
+                                }).create();
+                        dialog.show();
+                    }
+                })
+                .build()
+                .start();
+    }
+
+    public void onMethodRouter0(View v) {
+        HTRouterCall.call(MainActivity.this, "http://www.you.163.com/jumpA?a=lilei&b=10");
+    }
+
+    public void onMethodRouter1(View v) {
+        HTRouterCall.call(MainActivity.this, "http://www.you.163.com/jumpB?a=hanmeimei&b=10");
+    }
+
+    public void onMethodRouter2(View v) {
+        HTRouterCall.call(MainActivity.this, "http://www.you.163.com/jumpC");
     }
 }

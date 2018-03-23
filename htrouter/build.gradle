@@ -35,4 +35,5 @@ dependencies {
     })
 
     compile project (':htrouterdispatch')
+    compile "com.alibaba:fastjson:${FASTJSON_VERSION}"
 }

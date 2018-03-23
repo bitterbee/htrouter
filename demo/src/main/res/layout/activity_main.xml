@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/page_router_0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="onPageRouter0"
+        android:text="跳转到严选商品类别H5页面"/>
+
+    <Button
+        android:id="@+id/method_router_0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="onMethodRouter0"
+        android:text="jumpA"/>
+
+    <Button
+        android:id="@+id/method_router_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="onMethodRouter1"
+        android:text="jumpB"/>
+
+    <Button
+        android:id="@+id/method_router_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:onClick="onMethodRouter2"
+        android:text="jumpC"/>
+
+</LinearLayout>

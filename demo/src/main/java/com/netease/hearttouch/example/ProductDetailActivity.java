@@ -19,7 +19,7 @@ import com.netease.hearttouch.router.HTRouterManager;
 
 import java.util.HashMap;
 
-@HTRouter(url = {"http://www.kaola.com/activity/detail/{id}.shtml", "http://m.kaola.com/activity/detail/{id}.shtml", "http://m.kaola.com/product/{id}.html", "http://www.kaola.com/product/{id}.html"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
+@HTRouter(url = {"http://www.you.163.com/activity/detail/{id}.shtml", "http://m.you.163.com/activity/detail/{id}.shtml", "http://m.you.163.com/product/{id}.html", "http://www.you.163.com/product/{id}.html"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
 public class ProductDetailActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView tv;
     private Button btn;

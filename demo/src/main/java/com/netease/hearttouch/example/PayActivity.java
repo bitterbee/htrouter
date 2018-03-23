@@ -6,8 +6,11 @@ import android.view.View;
 import android.widget.Button;
 
 import com.netease.hearttouch.router.HTRouter;
+import com.netease.hearttouch.router.HTRouterEntry;
 
-@HTRouter(url = {"http://www.kaola.com/pay"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
+import java.util.List;
+
+@HTRouter(url = {"http://www.you.163.com/pay"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
 public class PayActivity extends AppCompatActivity {
 
     @Override
@@ -22,5 +25,5 @@ public class PayActivity extends AppCompatActivity {
             }
         });
     }
-
 }
+

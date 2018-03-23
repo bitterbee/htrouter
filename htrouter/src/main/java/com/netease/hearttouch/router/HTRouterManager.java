@@ -4,13 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 
 import com.netease.hearttouch.router.intercept.HTInterceptorEntry;
-import com.netease.hearttouch.router.intercept.IRouterInterceptor;
+import com.netease.hearttouch.router.method.HTMethodRouterEntry;
 
-import java.util.Collections;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -32,15 +35,21 @@ public class HTRouterManager {
 
     public static final int H5 = 2;
 
-    private static final List<HTRouterEntry> ENTRIES = new LinkedList<>();
+    private static final List<HTRouterEntry> PAGE_ENTRIES = new LinkedList<>();
+    static final List<HTMethodRouterEntry> METHOD_ENTRIES = new LinkedList<>();
 
-    public static void init(List<HTRouterEntry> inEntries, List<HTInterceptorEntry> inInterceptors) {
-        if (inEntries != null) {
-            ENTRIES.addAll(inEntries);
+    public static void init(List<HTRouterEntry> pageEntries,
+                            List<HTMethodRouterEntry> methodEntries,
+                            List<HTInterceptorEntry> annoInterceptors) {
+
+        if (pageEntries != null) {
+            PAGE_ENTRIES.addAll(pageEntries);
         }
-
-        if (inInterceptors != null) {
-            HTRouterCall.initAnnoInterceptors(inInterceptors);
+        if (methodEntries != null) {
+            METHOD_ENTRIES.addAll(methodEntries);
+        }
+        if (annoInterceptors != null) {
+            HTRouterCall.initAnnoInterceptors(annoInterceptors);
         }
     }
 
@@ -106,21 +115,12 @@ public class HTRouterManager {
     }
 
     private static int getAnimIdMethod(Class activity, boolean isExitAnim) {
-        for (HTRouterEntry entry : ENTRIES) {
+        for (HTRouterEntry entry : PAGE_ENTRIES) {
             if (entry.getActivity().toString().equals(activity.toString())) {
                 return isExitAnim ? entry.getExitAnim() : entry.getEntryAnim();
             }
         }
         return 0;
-    }
-
-    private static HTRouterEntry getRouterEntry(String url) {
-        for (HTRouterEntry entry : ENTRIES) {
-            if (entry.matches(url)) {
-                return entry;
-            }
-        }
-        return null;
     }
 
     /**
@@ -130,7 +130,7 @@ public class HTRouterManager {
      * @return 返回匹配成功后的实体类，如果找不到会返回null
      */
     public static HTRouterEntry findRouterEntryByUrl(String url) {
-        for (HTRouterEntry entry : ENTRIES) {
+        for (HTRouterEntry entry : PAGE_ENTRIES) {
             if (entry.matches(url)) {
                 return entry;
             }
@@ -160,9 +160,10 @@ public class HTRouterManager {
      * @param entryAnim    自定义的入场动画
      * @param exitAnim     自定义的出场动画
      */
-    /*package*/ static void startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
+    /*package*/
+    static void startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
         Intent intent = null;
-        HTRouterEntry entry = getRouterEntry(url);
+        HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
             intent = processIntent(activity, sourceIntent, url, entry.getActivity());
             activity.startActivity(intent);
@@ -201,7 +202,8 @@ public class HTRouterManager {
      * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
      * @param isFinish     跳转后是否需要关闭当前页面
      */
-    /*package*/ static void startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish) {
+    /*package*/
+    static void startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish) {
         startActivity(activity, url, sourceIntent, isFinish, 0, 0);
     }
 
@@ -217,13 +219,14 @@ public class HTRouterManager {
      * @param entryAnim    自定义的入场动画
      * @param exitAnim     自定义的出场动画
      */
-    /*package*/ static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
+    /*package*/
+    static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
         if (context instanceof Activity) {
             startActivity((Activity) context, url, sourceIntent, isFinish, entryAnim, exitAnim);
             return;
         }
         Intent intent = null;
-        HTRouterEntry entry = getRouterEntry(url);
+        HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
             intent = processIntent(context, sourceIntent, url, entry.getActivity());
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -246,7 +249,8 @@ public class HTRouterManager {
      * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
      * @param isFinish     跳转后是否需要关闭当前页面
      */
-    /*package*/ static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish) {
+    /*package*/
+    static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish) {
         startActivity(context, url, sourceIntent, isFinish, 0, 0);
     }
 
@@ -260,9 +264,10 @@ public class HTRouterManager {
      * @param entryAnim    自定义的入场动画
      * @param exitAnim     自定义的出场动画
      */
-    /*package*/ static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
+    /*package*/
+    static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
         Intent intent = null;
-        HTRouterEntry entry = getRouterEntry(url);
+        HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
             intent = processIntent(activity, sourceIntent, url, entry.getActivity());
             activity.startActivityForResult(intent, requestCode);
@@ -301,7 +306,8 @@ public class HTRouterManager {
      * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
      * @param isFinish     跳转后是否需要关闭当前页面
      */
-    /*package*/ static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
+    /*package*/
+    static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
         startActivityForResult(activity, url, sourceIntent, isFinish, requestCode, 0, 0);
     }
 
@@ -315,12 +321,13 @@ public class HTRouterManager {
      * @param entryAnim    自定义的入场动画
      * @param exitAnim     自定义的出场动画
      */
-    /*package*/ static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
+    /*package*/
+    static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
         if (fragment.getActivity() == null) {
             return;
         }
         Intent intent = null;
-        HTRouterEntry entry = getRouterEntry(url);
+        HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
             intent = processIntent(fragment.getActivity(), sourceIntent, url, entry.getActivity());
             fragment.startActivityForResult(intent, requestCode);
@@ -359,8 +366,56 @@ public class HTRouterManager {
      * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
      * @param isFinish     跳转后是否需要关闭当前页面
      */
-    /*package*/ static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
+    /*package*/
+    static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
         startActivityForResult(fragment, url, sourceIntent, isFinish, requestCode, 0, 0);
+    }
+
+    static Object callMethod(@Nullable Context context, String url)
+            throws ParamConvertor.ParamConvertException, NullPointerException {
+        HTMethodRouterEntry entry = findMethodRouterEntryByUrl(url);
+        Method method = null;
+        if (entry != null && entry.isValid()) {
+            method = entry.getMethod();
+        }
+        if (method == null) {
+            HTLogUtil.d("entry is invalid. url = " + url);
+            throw new NullPointerException("\"entry is invalid. url = \" + url");
+        }
+
+        List paramObjs = new ArrayList();
+        Uri uri = Uri.parse(url);
+        char c = 'a';
+        for (Class clazz : entry.paramTypes) {
+            if (Context.class.isAssignableFrom(clazz)) {
+                paramObjs.add(context);
+            } else {
+                String value = uri.getQueryParameter(Character.toString(c));
+                paramObjs.add(ParamConvertor.toObj(value, clazz));
+                c += 1;
+            }
+        }
+
+        if ((method.getModifiers() & Modifier.STATIC) != 0) {
+            return RefInvoker.invoke(null, method, paramObjs.toArray());
+        } else {
+            Object instance = RefInvoker.invokeStaticMethod(entry.className, "getInstance", null, null);
+            if (instance != null) {
+                return RefInvoker.invoke(instance, method, paramObjs.toArray());
+            }
+        }
+
+        return null;
+    }
+
+
+    public static HTMethodRouterEntry findMethodRouterEntryByUrl(String url) {
+        for (HTMethodRouterEntry entry : METHOD_ENTRIES) {
+            if (entry.matches(url)) {
+                return entry;
+            }
+        }
+        return null;
     }
 
     public static void setDebugMode(boolean debug) {

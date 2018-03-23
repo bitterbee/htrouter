@@ -9,7 +9,7 @@ import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 /**
  * Created by zyl06 on 13/03/2018.
  */
-@HTInterceptAnno(url = {"http://www.kaola.com/activity/detail/{id}.shtml", "http://m.kaola.com/activity/detail/{id}.shtml", "http://m.kaola.com/product/{id}.html", "http://www.kaola.com/product/{id}.html"})
+@HTInterceptAnno(url = {"http://www.you.163.com/activity/detail/{id}.shtml", "http://m.you.163.com/activity/detail/{id}.shtml", "http://m.you.163.com/product/{id}.html", "http://www.you.163.com/product/{id}.html"})
 public class ProductDetailInterceptor implements IRouterInterceptor {
 
     @Override
@@ -18,7 +18,6 @@ public class ProductDetailInterceptor implements IRouterInterceptor {
         HTLogUtil.d("Anno Interceptor 统计数据：" + params.getContext().getClass().getSimpleName() + "-->跳转url-->" + params.url +
                 "  参数intent" + params.sourceIntent);
         //如果需要拦截或者改变跳转的目标可以直接改变url或者sourceIntent
-//                routerParams.url = "http://www.kaola.com/pay?a=b&c=d";
         call.proceed();
     }
 }
