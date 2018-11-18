@@ -2,15 +2,16 @@ package com.netease.hearttouch.example;
 
 import android.app.Application;
 
+import com.netease.demo.router.HTRouterTable;
 import com.netease.hearttouch.router.HTRouterCall;
 import com.netease.hearttouch.router.HTRouterManager;
-import com.netease.hearttouch.router.HTRouterTable;
 
 public class HTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HTRouterManager.init(HTRouterTable.pageRouters(),
+        HTRouterManager.init(
+                HTRouterTable.pageRouterGroup(),
                 HTRouterTable.methodRouters(),
                 HTRouterTable.interceptors());
         //注册绑定默认的降级页面

@@ -1,9 +1,9 @@
 package com.netease.hearttouch.router.codegenerate;
 
-import com.netease.hearttouch.router.HTAnnotatedClass;
 import com.netease.hearttouch.router.HTAnnotatedMethod;
-import com.netease.hearttouch.router.HTRouterEntry;
+import com.netease.hearttouch.router.IRouterGroup;
 import com.netease.hearttouch.router.InterceptAnnoClass;
+import com.netease.hearttouch.router.Logger;
 import com.netease.hearttouch.router.intercept.HTInterceptorEntry;
 import com.netease.hearttouch.router.method.HTMethodRouterEntry;
 import com.squareup.javapoet.ClassName;
@@ -13,11 +13,11 @@ import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import javax.annotation.processing.Messager;
-import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
@@ -27,40 +27,39 @@ import static javax.lang.model.element.Modifier.FINAL;
 import static javax.lang.model.element.Modifier.PRIVATE;
 import static javax.lang.model.element.Modifier.PUBLIC;
 import static javax.lang.model.element.Modifier.STATIC;
-import static javax.tools.Diagnostic.Kind.ERROR;
-import static javax.tools.Diagnostic.Kind.WARNING;
 
 /**
  * Created by zyl06 on 13/03/2018.
  */
 
-public class RouterTableGenerator implements IClassGenerator {
+public class RouterTableGenerator extends BaseClassGenerator {
 
     private static final String HT_URL_PARAMS_KEY = "HT_URL_PARAMS_KEY";
-    private static final String PAGE_ROUTERS = "PAGE_ROUTERS";
+    private static final String ROUTER_GROUPS = "ROUTER_GROUPS";
     private static final String INTERCEPTORS = "INTERCEPTORS";
     private static final String METHOD_ROUTERS = "METHOD_ROUTERS";
 
-    private static final String PAGE_ROUTERS_METHOD = "pageRouters";
+    private static final String PAGE_ROUTERS_METHOD = "pageRouterGroup";
     private static final String INTERCEPTS_METHOD = "interceptors";
     private static final String METHOD_ROUTERS_METHOD = "methodRouters";
 
-    private Messager messager;
+    private String mPkgName;
+    private List<RouterGroupGenerator> mRouterGroupGens;
+    private List<InterceptAnnoClass> mAnnoIntercepts;
+    private List<HTAnnotatedMethod> mAnnoMethods;
 
-    public RouterTableGenerator(Messager messager) {
-        this.messager = messager;
+    public RouterTableGenerator(String pkgName,
+                                List<RouterGroupGenerator> routerGroupGens,
+                                List<InterceptAnnoClass> annoIntercepts,
+                                List<HTAnnotatedMethod> annoMethods) {
+        this.mPkgName = pkgName;
+        this.mRouterGroupGens = routerGroupGens;
+        this.mAnnoIntercepts = annoIntercepts;
+        this.mAnnoMethods = annoMethods;
     }
 
     @Override
-    public String className() {
-        return "HTRouterTable";
-    }
-
-    @Override
-    public TypeSpec generate(String packageName,
-                             List<HTAnnotatedClass> annoClasses,
-                             List<InterceptAnnoClass> annoIntercepts,
-                             List<HTAnnotatedMethod> annoMethods) {
+    public TypeSpec generate() {
         TypeSpec.Builder builder = classBuilder(className())
                 .addModifiers(PUBLIC, FINAL);
         builder.addJavadoc("用于用户启动Activity或者通过URL获得可以跳转的目标\n");
@@ -71,10 +70,12 @@ public class RouterTableGenerator implements IClassGenerator {
                 .build();
         builder.addField(htUrlParamKey);
 
+        ParameterizedTypeName mapTypeName = ParameterizedTypeName.get(ClassName.get(HashMap.class), ClassName.get(String.class),
+                ClassName.get(IRouterGroup.class));
         FieldSpec pageRouterField = FieldSpec
-                .builder(ParameterizedTypeName.get(List.class, HTRouterEntry.class), PAGE_ROUTERS,
+                .builder(mapTypeName, ROUTER_GROUPS,
                         PRIVATE, STATIC, FINAL)
-                .initializer("new $T()", ParameterizedTypeName.get(LinkedList.class, HTRouterEntry.class))
+                .initializer("new $T()", mapTypeName)
                 .build();
         builder.addField(pageRouterField);
 
@@ -94,25 +95,21 @@ public class RouterTableGenerator implements IClassGenerator {
 
         MethodSpec.Builder routerMapMethod = MethodSpec.methodBuilder(PAGE_ROUTERS_METHOD)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                .returns(ParameterizedTypeName.get(List.class, HTRouterEntry.class));
-        routerMapMethod.beginControlFlow("if (" + PAGE_ROUTERS + ".isEmpty())");
-        for (HTAnnotatedClass annotatedClass : annoClasses) {
-            for (String url : annotatedClass.urls) {
-                routerMapMethod.addStatement(PAGE_ROUTERS + ".add(new HTRouterEntry($S, $S, $L, $L, $L))",
-                        getClassName(annotatedClass.typeElement), url,
-                        annotatedClass.exitAnim, annotatedClass.entryAnim,
-                        annotatedClass.needLogin);
-            }
+                .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), ClassName.get(IRouterGroup.class)));
+        routerMapMethod.beginControlFlow("if (" + ROUTER_GROUPS + ".isEmpty())");
+        for (RouterGroupGenerator gen : mRouterGroupGens) {
+            routerMapMethod.addStatement(ROUTER_GROUPS + ".put($S, new $T())",
+                    gen.getGroup(), gen.getClassType());
         }
         routerMapMethod.endControlFlow();
-        routerMapMethod.addStatement("return " + PAGE_ROUTERS);
+        routerMapMethod.addStatement("return " + ROUTER_GROUPS);
         builder.addMethod(routerMapMethod.build());
 
         MethodSpec.Builder interceptorsMethod = MethodSpec.methodBuilder(INTERCEPTS_METHOD)
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(List.class, HTInterceptorEntry.class));
         interceptorsMethod.beginControlFlow("if (" + INTERCEPTORS + ".isEmpty())");
-        for (InterceptAnnoClass annotatedClass : annoIntercepts) {
+        for (InterceptAnnoClass annotatedClass : mAnnoIntercepts) {
             for (String url : annotatedClass.urls) {
                 interceptorsMethod.addStatement(INTERCEPTORS + ".add(new HTInterceptorEntry($S, new $T()))",
                         url, annotatedClass.typeElement);
@@ -126,7 +123,7 @@ public class RouterTableGenerator implements IClassGenerator {
                 .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
                 .returns(ParameterizedTypeName.get(List.class, HTMethodRouterEntry.class));
         methodRouterMethod.beginControlFlow("if (" + METHOD_ROUTERS + ".isEmpty())");
-        for (HTAnnotatedMethod annoMethod : annoMethods) {
+        for (HTAnnotatedMethod annoMethod : mAnnoMethods) {
             for (String url : annoMethod.urls) {
                 // String urls, Method method, List<Class> paramTypes
                 TypeElement enclosingElement = (TypeElement) annoMethod.element.getEnclosingElement();
@@ -136,7 +133,7 @@ public class RouterTableGenerator implements IClassGenerator {
                         ParameterizedTypeName.get(List.class, Class.class),
                         ParameterizedTypeName.get(ArrayList.class, Class.class));
                 for (VariableElement varElement : annoMethod.element.getParameters()) {
-                    messager.printMessage(WARNING, "varElement = " + varElement.asType());
+                    Logger.w("varElement = " + varElement.asType());
                     String typeName = varElement.asType().toString();
                     Object className = primaryTypeGuess(typeName);
                     if (className == null) {
@@ -157,44 +154,12 @@ public class RouterTableGenerator implements IClassGenerator {
     }
 
     @Override
-    public void printError(Messager messager) {
-        messager.printMessage(ERROR, "Couldn't generate HTRouterTable class");
+    public String packageName() {
+        return mPkgName;
     }
 
-    private String getClassName(Element element) {
-        ClassName className = ClassName.bestGuess(element.toString());
-
-        // get class full name
-        StringBuilder sbClazzName = new StringBuilder(32);
-        sbClazzName.append(className.packageName()).append(".");
-        for (String simplename : className.simpleNames()) {
-            sbClazzName.append(simplename);
-            sbClazzName.append("$");
-        }
-        sbClazzName.deleteCharAt(sbClazzName.length() - 1);
-
-        return sbClazzName.toString();
-    }
-
-    private Class primaryTypeGuess(String typeName) {
-        if ("int".equals(typeName)) {
-            return int.class;
-        } else if ("long".equals(typeName)) {
-            return long.class;
-        } else if ("float".equals(typeName)) {
-            return float.class;
-        } else if ("boolean".equals(typeName)) {
-            return boolean.class;
-        } else if ("double".equals(typeName)) {
-            return double.class;
-        } else if ("char".equals(typeName)) {
-            return char.class;
-        } else if ("short".equals(typeName)) {
-            return short.class;
-        } else if ("byte".equals(typeName)) {
-            return byte.class;
-        }
-
-        return null;
+    @Override
+    public String className() {
+        return "HTRouterTable";
     }
 }

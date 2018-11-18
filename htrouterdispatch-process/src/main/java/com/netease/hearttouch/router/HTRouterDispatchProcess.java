@@ -8,7 +8,8 @@ import com.google.auto.service.AutoService;
 import com.netease.hearttouch.pushcmd.PushCmdAnno;
 import com.netease.hearttouch.pushcmd.PushCmdAnnoClass;
 import com.netease.hearttouch.pushcmd.PushCmdCodeGenerator;
-import com.netease.hearttouch.router.codegenerate.IClassGenerator;
+import com.netease.hearttouch.router.codegenerate.BaseClassGenerator;
+import com.netease.hearttouch.router.codegenerate.RouterGroupGenerator;
 import com.netease.hearttouch.router.codegenerate.RouterTableGenerator;
 import com.netease.hearttouch.router.intercept.HTInterceptAnno;
 import com.netease.hearttouch.router.method.HTMethodRouter;
@@ -17,7 +18,11 @@ import com.squareup.javapoet.TypeSpec;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -44,16 +49,32 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
 
     private Messager messager;
     private Filer filer;
-    private String packageName = "com.netease.hearttouch.router";
 
-    private static final List<IClassGenerator> CLASS_GENERATORS = new ArrayList<IClassGenerator>();
+    private String mRouterPkgName = "com.netease.hearttouch.router";
+    private String mPushCmdPkgName = null;
+
+    private static final String ROUTER_PKG_KEY = "routerPkg";
+    private static final String PUSH_CMD_PKG_KEY = "pushCmdPkg";
+
+    private static final List<BaseClassGenerator> CLASS_GENERATORS = new ArrayList<>();
+    private Map<String, List<HTAnnotatedClass>> mAnnoInfos = new HashMap<>();
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
         messager = processingEnv.getMessager();
         filer = processingEnv.getFiler();
-        CLASS_GENERATORS.add(new RouterTableGenerator(messager));
+        Logger.sMessager = messager;
+
+        Map<String, String> options = processingEnv.getOptions();
+        if (options != null) {
+            if (options.containsKey(ROUTER_PKG_KEY)) {
+                mRouterPkgName = options.get(ROUTER_PKG_KEY);
+            }
+            if (options.containsKey(PUSH_CMD_PKG_KEY)) {
+                mPushCmdPkgName = options.get(PUSH_CMD_PKG_KEY);
+            }
+        }
     }
 
     @Override
@@ -96,7 +117,7 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
 
         try {
             TypeSpec generatedClass = PushCmdCodeGenerator.generatePushCmdDispatcherClass(annotatedClasses);
-            JavaFile javaFile = builder(packageName, generatedClass).build();
+            JavaFile javaFile = builder(mPushCmdPkgName, generatedClass).build();
             javaFile.writeTo(filer);
         } catch (IOException e) {
             e.printStackTrace();
@@ -104,8 +125,8 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
     }
 
     private boolean processHtRouter(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        List<HTAnnotatedClass> routerClasses = new ArrayList<>();
-        //获取所有通过HTRouter注解的项，遍历
+        List<HTAnnotatedClass> routerClazzes = new ArrayList<>();
+        // 获取所有通过HTRouter注解的项，遍历
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(HTRouter.class)) {
             TypeElement annotatedClass = (TypeElement) annotatedElement;
             //检测是否是支持的注解类型，如果不是里面会报错
@@ -113,21 +134,39 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
                 return true;
             }
             //获取到信息，把注解类的信息加入到列表中
-            HTRouter htRouter = annotatedElement.getAnnotation(HTRouter.class);
-            routerClasses.add(new HTAnnotatedClass(annotatedClass, htRouter.url(), htRouter.entryAnim(), htRouter.exitAnim(), htRouter.needLogin()));
+            HTRouter anno = annotatedElement.getAnnotation(HTRouter.class);
+            for (String url : anno.url()) {
+                HTAnnotatedClass annoClass = new HTAnnotatedClass(annotatedClass,
+                        url, anno.entryAnim(), anno.exitAnim(), anno.needLogin());
+                String group = annoClass.group();
+
+                List<HTAnnotatedClass> routerAnnos = mAnnoInfos.get(group);
+                if (routerAnnos == null) {
+                    routerAnnos = new LinkedList<>();
+                    mAnnoInfos.put(group, routerAnnos);
+                }
+                routerAnnos.add(annoClass);
+            }
         }
+
+        List<RouterGroupGenerator> groupGens = new ArrayList<>();
+        for (String key : mAnnoInfos.keySet()) {
+            List<HTAnnotatedClass> routerAnnos = mAnnoInfos.get(key);
+            groupGens.add(new RouterGroupGenerator(mRouterPkgName, key, routerAnnos));
+        }
+        CLASS_GENERATORS.addAll(groupGens);
 
         List<HTAnnotatedMethod> routerMethods = new ArrayList<>();
         for (Element element : roundEnv.getElementsAnnotatedWith(HTMethodRouter.class)) {
-            ExecutableElement exeElement = (ExecutableElement) element;
-            if (!isValidElement(exeElement, HTMethodRouter.class)) {
+            ExecutableElement exeElem = (ExecutableElement) element;
+            if (!isValidElement(exeElem, HTMethodRouter.class)) {
                 return true;
             }
 
 //            messager.printMessage(ERROR, "htmethodrouter = " + exeElement.getSimpleName());
-            HTMethodRouter router = exeElement.getAnnotation(HTMethodRouter.class);
+            HTMethodRouter router = exeElem.getAnnotation(HTMethodRouter.class);
 //            element.getEnclosingElement()
-            routerMethods.add(new HTAnnotatedMethod(router.url(), exeElement, router.needLogin()));
+            routerMethods.add(new HTAnnotatedMethod(router.url(), exeElem, router.needLogin()));
         }
 
         List<InterceptAnnoClass> interceptAnnos = new ArrayList<>();
@@ -142,17 +181,17 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
             interceptAnnos.add(new InterceptAnnoClass(annotatedClass, interceptAnno.url()));
         }
 
-        for (IClassGenerator generator : CLASS_GENERATORS) {
-            try {
-                if (!routerClasses.isEmpty() || !interceptAnnos.isEmpty()) {
-                    TypeSpec generatedClass = generator.generate(packageName,
-                            routerClasses, interceptAnnos, routerMethods);
+        CLASS_GENERATORS.add(new RouterTableGenerator(mRouterPkgName, groupGens, interceptAnnos, routerMethods));
 
-                    JavaFile javaFile = builder(packageName, generatedClass).build();
-                    javaFile.writeTo(filer);
+        for (BaseClassGenerator generator : CLASS_GENERATORS) {
+            try {
+                if (!routerClazzes.isEmpty() || !interceptAnnos.isEmpty()) {
+                    TypeSpec generatedClass = generator.generate();
+                    JavaFile javaFile = builder(generator.packageName(), generatedClass).build();
+                    generator.writeTo(javaFile, filer);
                 }
             } catch (IOException e) {
-                generator.printError(messager);
+                Logger.e(String.format(Locale.CHINA, "htrouter create %s failed: %s", generator.className(), e.toString()));
             }
         }
 

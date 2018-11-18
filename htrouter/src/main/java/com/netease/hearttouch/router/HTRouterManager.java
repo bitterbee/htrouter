@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by zyl06 on 13/03/2018.
@@ -35,15 +36,23 @@ public class HTRouterManager {
 
     public static final int H5 = 2;
 
-    private static final List<HTRouterEntry> PAGE_ENTRIES = new LinkedList<>();
+    private static final Map<String, List<HTRouterEntry>> PAGE_ROUTERS = new HashMap<>();
+    private static final Map<String, List<IRouterGroup>> PAGE_GROUPS = new HashMap<>();
     static final List<HTMethodRouterEntry> METHOD_ENTRIES = new LinkedList<>();
 
-    public static void init(List<HTRouterEntry> pageEntries,
+    public static void init(Map<String, IRouterGroup> pageGroups,
                             List<HTMethodRouterEntry> methodEntries,
                             List<HTInterceptorEntry> annoInterceptors) {
 
-        if (pageEntries != null) {
-            PAGE_ENTRIES.addAll(pageEntries);
+        if (pageGroups != null) {
+            for (String name : pageGroups.keySet()) {
+                List<IRouterGroup> groups = PAGE_GROUPS.get(name);
+                if (groups == null) {
+                    groups = new LinkedList<>();
+                    PAGE_GROUPS.put(name, groups);
+                }
+                groups.add(pageGroups.get(name));
+            }
         }
         if (methodEntries != null) {
             METHOD_ENTRIES.addAll(methodEntries);
@@ -115,10 +124,9 @@ public class HTRouterManager {
     }
 
     private static int getAnimIdMethod(Class activity, boolean isExitAnim) {
-        for (HTRouterEntry entry : PAGE_ENTRIES) {
-            if (entry.getActivity().toString().equals(activity.toString())) {
-                return isExitAnim ? entry.getExitAnim() : entry.getEntryAnim();
-            }
+        HTRouter anno = activity.getClass().getAnnotation(HTRouter.class);
+        if (anno != null) {
+            return isExitAnim ? anno.exitAnim() : anno.entryAnim();
         }
         return 0;
     }
@@ -130,7 +138,22 @@ public class HTRouterManager {
      * @return 返回匹配成功后的实体类，如果找不到会返回null
      */
     public static HTRouterEntry findRouterEntryByUrl(String url) {
-        for (HTRouterEntry entry : PAGE_ENTRIES) {
+        String group = RouterGroupHelper.getGroup(url);
+        List<HTRouterEntry> entries = PAGE_ROUTERS.get(group);
+        if (entries == null) {
+            List<IRouterGroup> groups = PAGE_GROUPS.get(group);
+            if (groups == null) {
+                return null;
+            }
+
+            entries = new LinkedList<>();
+            PAGE_ROUTERS.put(group, entries);
+            for (IRouterGroup rg : groups) {
+                entries.addAll(rg.pageRouters());
+            }
+        }
+
+        for (HTRouterEntry entry : entries) {
             if (entry.matches(url)) {
                 return entry;
             }
