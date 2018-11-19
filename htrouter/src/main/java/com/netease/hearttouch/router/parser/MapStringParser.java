@@ -3,7 +3,6 @@ package com.netease.hearttouch.router.parser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.parser.Feature;
-import com.netease.yxlogger.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +49,7 @@ public class MapStringParser extends IStringParser<Map> {
             }
             return result;
         } catch (NumberFormatException e) {
-            Logger.e(TAG, e.toString());
+            e.printStackTrace();
         }
 
         return defaultValue;

@@ -1,7 +1,5 @@
 package com.netease.hearttouch.router.parser;
 
-import com.netease.yxlogger.Logger;
-
 /**
  * Created by zyl06 on 10/10/16.
  */
@@ -33,7 +31,7 @@ public class IntStringParser extends IStringParser<Integer> {
         try {
             return Integer.parseInt(decode(str));
         } catch (NumberFormatException e) {
-            Logger.e(TAG, e.toString());
+            e.printStackTrace();
         }
 
         return defaultValue;

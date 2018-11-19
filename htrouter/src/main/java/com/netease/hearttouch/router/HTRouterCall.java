@@ -27,6 +27,10 @@ public class HTRouterCall implements IRouterCall {
 
     private int index = 0;
 
+    public static void init() {
+
+    }
+
     static void initAnnoInterceptors(List<HTInterceptorEntry> inInterceptors) {
         if (inInterceptors != null) {
             ANNO_INTERCEPTORS.addAll(inInterceptors);

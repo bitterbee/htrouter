@@ -2,7 +2,6 @@ package com.netease.hearttouch.example;
 
 import android.app.Application;
 
-import com.netease.demo.router.HTRouterTable;
 import com.netease.hearttouch.router.HTRouterCall;
 import com.netease.hearttouch.router.HTRouterManager;
 
@@ -10,10 +9,8 @@ public class HTApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HTRouterManager.init(
-                HTRouterTable.pageRouterGroup(),
-                HTRouterTable.methodRouters(),
-                HTRouterTable.interceptors());
+        HTRouterCall.init();
+
         //注册绑定默认的降级页面
         String customUrlKey = "customUrlKey"; //HTWebActivity接收参数key
         HTRouterManager.registerWebActivity(WebActivity.class, customUrlKey);

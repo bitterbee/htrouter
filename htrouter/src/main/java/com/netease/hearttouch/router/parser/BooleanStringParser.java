@@ -1,7 +1,5 @@
 package com.netease.hearttouch.router.parser;
 
-import com.netease.yxlogger.Logger;
-
 /**
  * Created by zyl06 on 10/12/16.
  */
@@ -32,7 +30,7 @@ public class BooleanStringParser extends IStringParser<Boolean> {
         try {
             return Boolean.parseBoolean(decode(str));
         } catch (NumberFormatException e) {
-            Logger.e(TAG, e.toString());
+            e.printStackTrace();
         }
 
         return defaultValue;

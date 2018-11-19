@@ -6,10 +6,12 @@ import com.netease.hearttouch.router.InterceptAnnoClass;
 import com.netease.hearttouch.router.Logger;
 import com.netease.hearttouch.router.intercept.HTInterceptorEntry;
 import com.netease.hearttouch.router.method.HTMethodRouterEntry;
+import com.squareup.javapoet.AnnotationSpec;
 import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.MethodSpec;
 import com.squareup.javapoet.ParameterizedTypeName;
+import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
@@ -35,10 +37,11 @@ import static javax.lang.model.element.Modifier.STATIC;
 public class RouterTableGenerator extends BaseClassGenerator {
 
     private static final String HT_URL_PARAMS_KEY = "HT_URL_PARAMS_KEY";
-    private static final String ROUTER_GROUPS = "ROUTER_GROUPS";
-    private static final String INTERCEPTORS = "INTERCEPTORS";
-    private static final String METHOD_ROUTERS = "METHOD_ROUTERS";
+    private static final String ROUTER_GROUPS = "mRouterGroups";
+    private static final String INTERCEPTORS = "mInterceptors";
+    private static final String METHOD_ROUTERS = "mMethodRouters";
 
+    private static final String INIT_METHOD = "init";
     private static final String PAGE_ROUTERS_METHOD = "pageRouterGroup";
     private static final String INTERCEPTS_METHOD = "interceptors";
     private static final String METHOD_ROUTERS_METHOD = "methodRouters";
@@ -61,8 +64,10 @@ public class RouterTableGenerator extends BaseClassGenerator {
     @Override
     public TypeSpec generate() {
         TypeSpec.Builder builder = classBuilder(className())
-                .addModifiers(PUBLIC, FINAL);
+                .addModifiers(PUBLIC, FINAL)
+                .addAnnotation(ClassName.get("org.aspectj.lang.annotation", "Aspect"));
         builder.addJavadoc("用于用户启动Activity或者通过URL获得可以跳转的目标\n");
+
         FieldSpec htUrlParamKey = FieldSpec
                 .builder(String.class, HT_URL_PARAMS_KEY,
                         PUBLIC, STATIC, FINAL)
@@ -74,27 +79,49 @@ public class RouterTableGenerator extends BaseClassGenerator {
                 ClassName.get(IRouterGroup.class));
         FieldSpec pageRouterField = FieldSpec
                 .builder(mapTypeName, ROUTER_GROUPS,
-                        PRIVATE, STATIC, FINAL)
+                        PRIVATE, FINAL)
                 .initializer("new $T()", mapTypeName)
                 .build();
         builder.addField(pageRouterField);
 
         FieldSpec interceptorsField = FieldSpec
                 .builder(ParameterizedTypeName.get(List.class, HTInterceptorEntry.class), INTERCEPTORS,
-                        PRIVATE, STATIC, FINAL)
+                        PRIVATE, FINAL)
                 .initializer("new $T()", ParameterizedTypeName.get(LinkedList.class, HTInterceptorEntry.class))
                 .build();
         builder.addField(interceptorsField);
 
         FieldSpec methodRouterField = FieldSpec
                 .builder(ParameterizedTypeName.get(List.class, HTMethodRouterEntry.class), METHOD_ROUTERS,
-                        PRIVATE, STATIC, FINAL)
+                        PRIVATE, FINAL)
                 .initializer("new $T()", ParameterizedTypeName.get(LinkedList.class, HTMethodRouterEntry.class))
                 .build();
         builder.addField(methodRouterField);
 
+        ///////////////////////////////////
+        // void init()
+        MethodSpec.Builder initMethod = MethodSpec.methodBuilder(INIT_METHOD)
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(ClassName.get("org.aspectj.lang", "JoinPoint"), "joinPoint")
+                .returns(TypeName.VOID);
+
+        AnnotationSpec.Builder annoBuilder = AnnotationSpec.builder(ClassName.get("org.aspectj.lang.annotation", "After"));
+        annoBuilder.addMember("value", "\"execution(void com.netease.hearttouch.router.HTRouterCall.init())\"");
+        initMethod.addAnnotation(annoBuilder.build());
+
+        StringBuilder sb = new StringBuilder(32);
+        sb.append("$T.init(")
+                .append(PAGE_ROUTERS_METHOD).append("(), ")
+                .append(METHOD_ROUTERS_METHOD).append("(), ")
+                .append(INTERCEPTS_METHOD).append("())");
+        initMethod.addStatement(sb.toString(),
+                ClassName.get("com.netease.hearttouch.router", "HTRouterManager"));
+        builder.addMethod(initMethod.build());
+
+        ///////////////////////////////////
+        // Map<String, IRouterGroup> pageRouterGroup()
         MethodSpec.Builder routerMapMethod = MethodSpec.methodBuilder(PAGE_ROUTERS_METHOD)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(ClassName.get(Map.class), ClassName.get(String.class), ClassName.get(IRouterGroup.class)));
         routerMapMethod.beginControlFlow("if (" + ROUTER_GROUPS + ".isEmpty())");
         for (RouterGroupGenerator gen : mRouterGroupGens) {
@@ -105,8 +132,10 @@ public class RouterTableGenerator extends BaseClassGenerator {
         routerMapMethod.addStatement("return " + ROUTER_GROUPS);
         builder.addMethod(routerMapMethod.build());
 
+        ///////////////////////////////////
+        // List<HTInterceptorEntry> interceptors()
         MethodSpec.Builder interceptorsMethod = MethodSpec.methodBuilder(INTERCEPTS_METHOD)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(List.class, HTInterceptorEntry.class));
         interceptorsMethod.beginControlFlow("if (" + INTERCEPTORS + ".isEmpty())");
         for (InterceptAnnoClass annotatedClass : mAnnoIntercepts) {
@@ -119,8 +148,10 @@ public class RouterTableGenerator extends BaseClassGenerator {
         interceptorsMethod.addStatement("return " + INTERCEPTORS);
         builder.addMethod(interceptorsMethod.build());
 
+        ///////////////////////////////////
+        // List<HTMethodRouterEntry> methodRouters()
         MethodSpec.Builder methodRouterMethod = MethodSpec.methodBuilder(METHOD_ROUTERS_METHOD)
-                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .addModifiers(Modifier.PRIVATE)
                 .returns(ParameterizedTypeName.get(List.class, HTMethodRouterEntry.class));
         methodRouterMethod.beginControlFlow("if (" + METHOD_ROUTERS + ".isEmpty())");
         for (HTAnnotatedMethod annoMethod : mAnnoMethods) {

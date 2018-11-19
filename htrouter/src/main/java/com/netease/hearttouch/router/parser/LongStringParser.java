@@ -1,7 +1,5 @@
 package com.netease.hearttouch.router.parser;
 
-import com.netease.yxlogger.Logger;
-
 /**
  * Created by hzhuangzhuoyin on 2017/3/7.
  * 仿造 IntStringParser 写的 Long 型 Parser
@@ -34,7 +32,7 @@ public class LongStringParser extends IStringParser<Long>{
         try {
             return Long.parseLong(decode(str));
         } catch (NumberFormatException e) {
-            Logger.e(TAG, e.toString());
+            e.printStackTrace();
         }
 
         return defaultValue;
