@@ -39,6 +39,8 @@ public class HTRouterManager {
     private static final Map<String, List<HTRouterEntry>> PAGE_ROUTERS = new HashMap<>();
     private static final Map<String, List<IRouterGroup>> PAGE_GROUPS = new HashMap<>();
     static final List<HTMethodRouterEntry> METHOD_ENTRIES = new LinkedList<>();
+    private static final Map<String, HTRouterEntry> mEntryCache = new HashMap<>();
+    private static final Map<String, HTMethodRouterEntry> mMethodEntryCache = new HashMap<>();
 
     public static void init(Map<String, IRouterGroup> pageGroups,
                             List<HTMethodRouterEntry> methodEntries,
@@ -138,6 +140,11 @@ public class HTRouterManager {
      * @return 返回匹配成功后的实体类，如果找不到会返回null
      */
     public static HTRouterEntry findRouterEntryByUrl(String url) {
+        HTRouterEntry result = mEntryCache.get(url);
+        if (result != null) {
+            return result;
+        }
+
         String group = RouterGroupHelper.getGroup(url);
         List<HTRouterEntry> entries = PAGE_ROUTERS.get(group);
         if (entries == null) {
@@ -155,6 +162,7 @@ public class HTRouterManager {
 
         for (HTRouterEntry entry : entries) {
             if (entry.matches(url)) {
+                mEntryCache.put(url, entry);
                 return entry;
             }
         }
@@ -184,7 +192,12 @@ public class HTRouterManager {
      * @param exitAnim     自定义的出场动画
      */
     /*package*/
-    static void startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
+    static void startActivity(Activity activity,
+                              String url,
+                              Intent sourceIntent,
+                              boolean isFinish,
+                              int entryAnim,
+                              int exitAnim) {
         Intent intent = null;
         HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
@@ -243,9 +256,12 @@ public class HTRouterManager {
      * @param exitAnim     自定义的出场动画
      */
     /*package*/
-    static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
+    static void startActivity(Context context,
+                              String url,
+                              Intent sourceIntent, boolean isFinish, int entryAnim, int exitAnim) {
         if (context instanceof Activity) {
-            startActivity((Activity) context, url, sourceIntent, isFinish, entryAnim, exitAnim);
+            startActivity((Activity) context, url, sourceIntent,
+                    isFinish, entryAnim, exitAnim);
             return;
         }
         Intent intent = null;
@@ -263,21 +279,6 @@ public class HTRouterManager {
     }
 
     /**
-     * 通过URL启动一个页面
-     *
-     * @param context      当前需要进行跳转的 context
-     *                     如果 context 是 Activity，则使用 startActivity(Activity activity, String url, Intent sourceIntent, boolean isFinish)进行跳转
-     *                     否则这个函数进行处理，但参数 isFinish 不会生效，另外启动页面的场景切换动画会使用主题默认动画
-     * @param url          跳转的目标URL
-     * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
-     * @param isFinish     跳转后是否需要关闭当前页面
-     */
-    /*package*/
-    static void startActivity(Context context, String url, Intent sourceIntent, boolean isFinish) {
-        startActivity(context, url, sourceIntent, isFinish, 0, 0);
-    }
-
-    /**
      * 通过URL启动一个页面,同时可以获得result回调
      *
      * @param activity     当前需要进行跳转的activity
@@ -288,7 +289,13 @@ public class HTRouterManager {
      * @param exitAnim     自定义的出场动画
      */
     /*package*/
-    static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
+    static void startActivityForResult(Activity activity,
+                                       String url,
+                                       Intent sourceIntent,
+                                       boolean isFinish,
+                                       int requestCode,
+                                       int entryAnim,
+                                       int exitAnim) {
         Intent intent = null;
         HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
@@ -322,19 +329,6 @@ public class HTRouterManager {
     }
 
     /**
-     * 通过URL启动一个页面,同时可以获得result回调
-     *
-     * @param activity     当前需要进行跳转的activity
-     * @param url          跳转的目标URL
-     * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
-     * @param isFinish     跳转后是否需要关闭当前页面
-     */
-    /*package*/
-    static void startActivityForResult(Activity activity, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
-        startActivityForResult(activity, url, sourceIntent, isFinish, requestCode, 0, 0);
-    }
-
-    /**
      * 通过URL启动一个页面,同时可以获得result回调，回调在fragment中
      *
      * @param fragment     当前需要进行跳转的fragment
@@ -345,10 +339,17 @@ public class HTRouterManager {
      * @param exitAnim     自定义的出场动画
      */
     /*package*/
-    static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode, int entryAnim, int exitAnim) {
+    static void startActivityForResult(Fragment fragment,
+                                       String url,
+                                       Intent sourceIntent,
+                                       boolean isFinish,
+                                       int requestCode,
+                                       int entryAnim,
+                                       int exitAnim) {
         if (fragment.getActivity() == null) {
             return;
         }
+
         Intent intent = null;
         HTRouterEntry entry = findRouterEntryByUrl(url);
         if (entry != null) {
@@ -379,19 +380,6 @@ public class HTRouterManager {
                 fragment.getActivity().overridePendingTransition(entryAnim, exitAnim);
             }
         }
-    }
-
-    /**
-     * 通过URL启动一个页面,同时可以获得result回调，回调在fragment中
-     *
-     * @param fragment     当前需要进行跳转的fragment
-     * @param url          跳转的目标URL
-     * @param sourceIntent 传递进来一个intent，用户数据及启动模式等扩展
-     * @param isFinish     跳转后是否需要关闭当前页面
-     */
-    /*package*/
-    static void startActivityForResult(Fragment fragment, String url, Intent sourceIntent, boolean isFinish, int requestCode) {
-        startActivityForResult(fragment, url, sourceIntent, isFinish, requestCode, 0, 0);
     }
 
     static Object callMethod(@Nullable Context context, String url)
@@ -433,12 +421,18 @@ public class HTRouterManager {
 
 
     public static HTMethodRouterEntry findMethodRouterEntryByUrl(String url) {
-        for (HTMethodRouterEntry entry : METHOD_ENTRIES) {
-            if (entry.matches(url)) {
-                return entry;
+        HTMethodRouterEntry result = mMethodEntryCache.get(url);
+        if (result == null) {
+            for (HTMethodRouterEntry entry : METHOD_ENTRIES) {
+                if (entry.matches(url)) {
+                    mMethodEntryCache.put(url, entry);
+                    result = entry;
+                    break;
+                }
             }
         }
-        return null;
+
+        return result;
     }
 
     public static void setDebugMode(boolean debug) {

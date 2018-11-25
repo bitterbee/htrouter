@@ -14,14 +14,14 @@ public class HTRouterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        if (intent != null && intent.getData()!= null) {
+        if (intent != null && intent.getData() != null) {
             HTLogUtil.d("receive URL:" + intent.getData().toString());
             String url = intent.getData().toString();
-            HTRouterManager.startActivity(HTRouterActivity.this,url,intent,true);
+            HTRouterManager.startActivity(HTRouterActivity.this, url, null, intent, true);
         } else {
             finish();
             HTLogUtil.d("page error,needs URL format ");
-            Toast.makeText(HTRouterActivity.this,"page error",Toast.LENGTH_SHORT).show();
+            Toast.makeText(HTRouterActivity.this, "page error", Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -105,6 +105,15 @@ public class HTRouterCall implements IRouterCall {
 
     private void realProceed() {
         HTUrlEntry entry = HTRouterManager.findRouterEntryByUrl(params.url);
+        if (entry == null && params.downgradeUrls != null) {
+            for (String url : params.downgradeUrls) {
+                entry = HTRouterManager.findRouterEntryByUrl(url);
+                if (entry != null) {
+                    break;
+                }
+            }
+        }
+
         if (entry != null) {
             doProceedPageRouter();
             return;
@@ -128,17 +137,20 @@ public class HTRouterCall implements IRouterCall {
     private void doProceedPageRouter() {
         if (params.forResult) {
             if (params.context != null) {
-                HTRouterManager.startActivityForResult((Activity) params.context, params.url,
+                HTRouterManager.startActivityForResult((Activity) params.context,
+                        params.url,
                         params.sourceIntent, params.isFinish, params.requestCode,
                         params.entryAnim, params.exitAnim);
             } else {
-                HTRouterManager.startActivityForResult(params.fragment, params.url,
+                HTRouterManager.startActivityForResult(params.fragment,
+                        params.url,
                         params.sourceIntent, params.isFinish, params.requestCode,
                         params.entryAnim, params.exitAnim);
             }
         } else {
             if (params.context != null) {
-                HTRouterManager.startActivity(params.context, params.url,
+                HTRouterManager.startActivity(params.context,
+                        params.url,
                         params.sourceIntent, params.isFinish,
                         params.entryAnim, params.exitAnim);
             }
@@ -169,6 +181,24 @@ public class HTRouterCall implements IRouterCall {
 
         public Builder url(String url) {
             call.params.url = url;
+            return this;
+        }
+
+        public Builder downgradeUrls(List<String> urls) {
+            if (urls != null) {
+                call.params.downgradeUrls = new LinkedList<>();
+                call.params.downgradeUrls.addAll(urls);
+            }
+            return this;
+        }
+
+        public Builder downgradeUrls(String... urls) {
+            if (urls != null) {
+                call.params.downgradeUrls = new LinkedList<>();
+                for (String url : urls) {
+                    call.params.downgradeUrls.add(url);
+                }
+            }
             return this;
         }
 
