@@ -17,7 +17,7 @@ public class HTRouterActivity extends Activity {
         if (intent != null && intent.getData() != null) {
             HTLogUtil.d("receive URL:" + intent.getData().toString());
             String url = intent.getData().toString();
-            HTRouterManager.startActivity(HTRouterActivity.this, url, null, intent, true);
+            HTRouterManager.startActivity(HTRouterActivity.this, url, intent, true);
         } else {
             finish();
             HTLogUtil.d("page error,needs URL format ");

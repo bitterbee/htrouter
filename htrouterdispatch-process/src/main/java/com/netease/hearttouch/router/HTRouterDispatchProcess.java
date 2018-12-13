@@ -65,6 +65,7 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
         messager = processingEnv.getMessager();
         filer = processingEnv.getFiler();
         Logger.sMessager = messager;
+        mAnnoInfos.clear();
 
         Map<String, String> options = processingEnv.getOptions();
         if (options != null) {
@@ -102,6 +103,10 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
     }
 
     private void processPushCmd(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        if (mPushCmdPkgName == null) {
+            return;
+        }
+
         List<PushCmdAnnoClass> annotatedClasses = new ArrayList<>();
         //获取所有通过HTRouter注解的项，遍历
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(PushCmdAnno.class)) {
@@ -125,10 +130,10 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
     }
 
     private boolean processHtRouter(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        List<HTAnnotatedClass> routerClazzes = new ArrayList<>();
         // 获取所有通过HTRouter注解的项，遍历
         for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(HTRouter.class)) {
             TypeElement annotatedClass = (TypeElement) annotatedElement;
+
             //检测是否是支持的注解类型，如果不是里面会报错
             if (!isValidElement(annotatedClass, HTRouter.class)) {
                 return true;
@@ -160,6 +165,7 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
         for (Element element : roundEnv.getElementsAnnotatedWith(HTMethodRouter.class)) {
             ExecutableElement exeElem = (ExecutableElement) element;
             if (!isValidElement(exeElem, HTMethodRouter.class)) {
+                Logger.e("htrouter exeElem invalid: " + exeElem);
                 return true;
             }
 
@@ -174,6 +180,7 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
             TypeElement annotatedClass = (TypeElement) annotatedElement;
             //检测是否是支持的注解类型，如果不是里面会报错
             if (!isValidElement(annotatedClass, HTInterceptAnno.class)) {
+                Logger.e("htrouter HTInterceptElem invalid: " + annotatedClass);
                 return true;
             }
             //获取到信息，把注解类的信息加入到列表中
@@ -185,11 +192,9 @@ public class HTRouterDispatchProcess extends AbstractProcessor {
 
         for (BaseClassGenerator generator : CLASS_GENERATORS) {
             try {
-                if (!routerClazzes.isEmpty() || !interceptAnnos.isEmpty()) {
-                    TypeSpec generatedClass = generator.generate();
-                    JavaFile javaFile = builder(generator.packageName(), generatedClass).build();
-                    generator.writeTo(javaFile, filer);
-                }
+                TypeSpec generatedClass = generator.generate();
+                JavaFile javaFile = builder(generator.packageName(), generatedClass).build();
+                generator.writeTo(javaFile, filer);
             } catch (IOException e) {
                 Logger.e(String.format(Locale.CHINA, "htrouter create %s failed: %s", generator.className(), e.toString()));
             }
