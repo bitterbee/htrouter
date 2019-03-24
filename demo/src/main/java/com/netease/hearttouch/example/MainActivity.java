@@ -12,7 +12,7 @@ import com.netease.hearttouch.router.HTRouterCall;
 import com.netease.hearttouch.router.IRouterCall;
 import com.netease.hearttouch.router.intercept.IRouterInterceptor;
 
-@HTRouter(url = {"yanxuan://www.you.163.com/", "yanxuan://m.you.163.com"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit)
+@HTRouter(url = {"http://www.you.163.com/", "http://m.you.163.com"}, entryAnim = R.anim.enter, exitAnim = R.anim.exit, needLogin = false)
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onPageRouter0(View v) {
-        HTRouterCall.newBuilder("http://www.you.163.com/activity/detail/6932.shtml?navindex=7")
+        HTRouterCall.newBuilder("http://www.you.163.com/activity/detail/101.shtml")
                 .context(MainActivity.this)
                 .interceptors(new IRouterInterceptor() {
                     @Override
@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog.show();
                     }
                 })
+                .downgradeUrls("http://m.you.163.com/activity/detail/{id}.shtml", "http://m.you.163.com/product/{id}.html")
                 .build()
                 .start();
     }

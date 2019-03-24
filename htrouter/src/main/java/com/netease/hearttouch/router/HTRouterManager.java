@@ -42,9 +42,9 @@ public class HTRouterManager {
     private static final Map<String, HTRouterEntry> mEntryCache = new HashMap<>();
     private static final Map<String, HTMethodRouterEntry> mMethodEntryCache = new HashMap<>();
 
-    public static void init(Map<String, IRouterGroup> pageGroups,
-                            List<HTMethodRouterEntry> methodEntries,
-                            List<HTInterceptorEntry> annoInterceptors) {
+    static void init(Map<String, IRouterGroup> pageGroups,
+                     List<HTMethodRouterEntry> methodEntries,
+                     List<HTInterceptorEntry> annoInterceptors) {
 
         if (pageGroups != null) {
             for (String name : pageGroups.keySet()) {

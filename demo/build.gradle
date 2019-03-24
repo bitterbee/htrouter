@@ -2,6 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'android-aspectjx'
 
+repositories {
+    mavenLocal()
+    maven { url 'https://raw.githubusercontent.com/bitterbee/mvn-repo/master/' }
+//    maven { url uri('../repo') }
+    maven{ url 'https://dl.google.com/dl/android/maven2/'}
+    jcenter()
+    maven { url 'https://maven.google.com'}
+
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 android {
     compileSdkVersion COMPILE_SDK_VERSION.toInteger()
     buildToolsVersion BUILD_TOOLS_VERSION
@@ -50,6 +63,8 @@ dependencies {
     compile "com.android.support:appcompat-v7:${APPCOMPAT_V7_VERSION}"
     compile 'com.android.support:design:23.1.1'
 
-    compile project(':htrouter')
-    apt project(':htrouterdispatch-process')
+//    compile project(':htrouter')
+    compile "com.netease.heartouch.router:htrouter:${HTROUTER_VERSION}"
+//    apt project(':htrouterdispatch-process')
+    apt "com.netease.heartouch.router:htrouterdispatch-process:${HTROUTERDISPATCH_PROCESS_VERSION}"
 }

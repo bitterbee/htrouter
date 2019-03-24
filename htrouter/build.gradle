@@ -1,5 +1,19 @@
 apply plugin: 'com.android.library'
 apply plugin: 'android-aspectjx'
+apply plugin: 'maven'
+
+repositories {
+    mavenLocal()
+//    maven { url 'https://raw.githubusercontent.com/bitterbee/mvn-repo/master/' }
+    maven { url uri('../repo') }
+    maven{ url 'https://dl.google.com/dl/android/maven2/'}
+    jcenter()
+    maven { url 'https://maven.google.com'}
+
+    flatDir {
+        dirs 'libs'
+    }
+}
 
 android {
     compileSdkVersion COMPILE_SDK_VERSION.toInteger()
@@ -38,7 +52,19 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile project (':htrouterdispatch')
+//    compile project (':htrouterdispatch')
+    compile "com.netease.heartouch.router:htrouterdispatch:${HTROUTERDISPATCH_VERSION}"
     compile "com.alibaba:fastjson:${FASTJSON_VERSION}"
     provided "org.aspectj:aspectjrt:${ASPECTJRT_VERSION}"
+}
+
+version = HTROUTER_VERSION
+group = HTROUTER_GROUP
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri("${rootProject.projectDir}/repo"))
+        }
+    }
 }
